@@ -10,65 +10,28 @@ const router = express.Router();
 const User = require("../models/User");
 
 router.post("/signup", function (req, res) {
-  console.log("Postou!");
+  const { login, password } = req.body;
+  let user = new User({ login, password })
+
+  bcrypt.hash(password, 10, async function(err, hash) {
+    if(err) return res.send(err);
+    user.password = hash;
+
+    await user.save();
+    res.send(user);
+  })
 })
 
-router.post(
-  "/login",
-  [
-    check("password", "Senha invalida (min 6)").isLength({
-      min: 6
-    })
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
+router.post("/login", async (req, res) => {
+  const { login, password } = req.body;
+  const user = await User.findOne({ login });
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors
-      });
-    }
+  if(!user) return res.send(404);
 
-    const {
-      username,
-      password
-    } = req.body;
-    try {
-      let user = await User.findOne({
-        username
-      });
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch)
-        return res.status(400).json({
-          message: "Login/Password not correct!"
-        });
-
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-
-      jwt.sign(
-        payload,
-        "randomString", {
-          expiresIn: 3600
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token
-          });
-        }
-      );
-    } catch (e) {
-      console.error(e);
-      res.status(500).json({
-        message: "Server Error"
-      });
-    }
-  }
-);
+  bcrypt.compare(password, user.password, async (err, result) => {
+    if(err) return res.send(401);
+    return res.send(result ? 200 : 401);
+  });
+});
 
 module.exports = router;
