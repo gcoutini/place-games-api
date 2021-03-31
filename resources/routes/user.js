@@ -21,11 +21,11 @@ router.post("/login", async (req, res) => {
   const { login, password } = req.body;
   const user = await User.findOne({ login });
 
-  if(!user) return res.send(404);
+  if(!user) return res.sendStatus(404);
 
   bcrypt.compare(password, user.password, async (err, result) => {
-    if(err) return res.send(401);
-    return res.send(result ? 200 : 401);
+    if(err) return res.sendStatus(401);
+    return res.sendStatus(result ? 200 : 401);
   });
 });
 

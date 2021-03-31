@@ -14,6 +14,15 @@ router.post("/register_client", async (req, res) => {
   res.status(201).json(customer);
 })
 
+router.get("/load_customers", async (req, res) => {
+  const customer = await Customer.find( { }, { '_id': 0, 'name': 1, 'cpf': 1, 'cel': 1 });
+  console.log(customer);
+  return !customer? res.send(404) : res.status(200).json(customer);
+
+});
+
+
+
 router.post("/verify_client", async (req, res) => {
   const { name, cpf } = req.body;
   console.log(req.body);
