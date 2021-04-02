@@ -15,10 +15,14 @@ router.post("/register_client", async (req, res) => {
 })
 
 router.get("/load_customers", async (req, res) => {
-  const customer = await Customer.find( { }, { '_id': 0, 'name': 1, 'cpf': 1, 'cel': 1 });
-  console.log(customer);
+  const customer = await Customer.find().populate("rentals");
   return !customer? res.send(404) : res.status(200).json(customer);
+});
 
+router.post("/info_search", async (req, res) => {
+  const { name, cpf } = req.body;
+  const info = await Customer.findOne({ $or: [{ name }, { cpf }] });
+  return !info? res.send(404) : res.status(200).json(info);
 });
 
 

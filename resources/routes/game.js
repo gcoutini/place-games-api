@@ -15,8 +15,8 @@ router.post("/register_game", async (req, res) => {
 })
 
 router.get("/load_games", async (req, res) => {
-  const game = await Game.find( { }, { '_id': 0, 'title': 1, 'players_number': 1, 'available': 1 });
-  console.log(game);
+  const game = await Game.find();
+  console.log("Jogos:", game);
   return !game? res.send(404) : res.status(200).json(game);
 
 });

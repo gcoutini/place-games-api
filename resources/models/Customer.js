@@ -40,7 +40,11 @@ const CustomerSchema = new mongoose.Schema({
     },
     uf: {
         type: String,
-    }
+    },
+    rentals: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "rent"
+    }]
 
 
 });
