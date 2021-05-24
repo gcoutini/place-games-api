@@ -1,6 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+
+const authConfig = require('../../config/auth.json');
 
 const User = require("../models/User");
 
@@ -21,11 +24,14 @@ router.post("/login", async (req, res) => {
   const { login, password } = req.body;
   const user = await User.findOne({ login });
 
-  if(!user) return res.send(404);
+  if(!user) return res.sendStatus(404);
 
   bcrypt.compare(password, user.password, async (err, result) => {
-    if(err) return res.send(401);
-    return res.send(result ? 200 : 401);
+    if(err) return res.sendStatus(401);
+    const token = jwt.sign({ id: user._id }, authConfig.secret, {
+      expiresIn: 86400,
+    });
+    return res.status(result ? 200 : 401).json({ user, token });
   });
 });
 

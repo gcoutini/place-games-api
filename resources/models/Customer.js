@@ -19,7 +19,34 @@ const CustomerSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-    }
+    },
+    cep: {
+        type: String,
+    },
+    logradouro: {
+        type: String,
+    },
+    house_number: {
+        type: String,
+    },
+    complement: {
+        type: String,
+    },
+    bairro: {
+        type: String,
+    },
+    localidade: {
+        type: String,
+    },
+    uf: {
+        type: String,
+    },
+    rentals: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "rent"
+    }]
+
+
 });
 
 module.exports = mongoose.model('customer', CustomerSchema);
