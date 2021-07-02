@@ -27,6 +27,10 @@ const RentSchema = new mongoose.Schema({
     price: {
       type: Number,
       require: true
+    },
+    paidFor: {
+      type: Boolean,
+      require: true
     }
 });
 
